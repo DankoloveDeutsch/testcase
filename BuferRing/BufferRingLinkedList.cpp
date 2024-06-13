@@ -28,17 +28,15 @@ public:
 		if (size == maxSize) {
 			std::cout << "Buffer is full" << std::endl;
 			return;
-		}
-		else {
-			Node* ptr = new Node(data);
-			ptr->prev = tail;
-			if (tail != NULL)
-				tail->next = ptr;
-			if (head == NULL)
-				head = ptr;
-			tail = ptr;
-			size++;
-		}
+		Node* ptr = new Node(data);
+		ptr->prev = tail;
+		if (tail != NULL)
+			tail->next = ptr;
+		if (head == NULL)
+			head = ptr;
+		tail = ptr;
+		size++;
+		
 	}
 	void pop_front() {
 		if (head == nullptr) {
