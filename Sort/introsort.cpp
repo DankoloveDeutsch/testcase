@@ -5,12 +5,10 @@
 #include <random>
 
 void insertionsort(std::vector<int>& data, int low, int high) {
-    for (int i = low + 1; i <= high; i++)
-    {
+    for (int i = low + 1; i <= high; i++) {
         int value = data[i];
         int j = i;
-        while (j > low && data[j - 1] > value)
-        {
+        while (j > low && data[j - 1] > value) {
             data[j] = data[j - 1];
             j--;
         }
@@ -21,10 +19,8 @@ void insertionsort(std::vector<int>& data, int low, int high) {
 int partition(std::vector<int>& data, int low, int high) {
     int pivot = data[high];
     int pIndex = low;
-    for (int i = low; i < high; i++)
-    {
-        if (data[i] <= pivot)
-        {
+    for (int i = low; i < high; i++) {
+        if (data[i] <= pivot) {
             std::swap(data[i], data[pIndex]);
             pIndex++;
         }
@@ -66,7 +62,6 @@ void sort(std::vector<int>& data) {
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     std::cout << "\nExecution time: " << duration << " nanoseconds" << std::endl;
-
 }
 std::vector<int> generate_random_data(int size) {
     std::vector<int> data(size);
