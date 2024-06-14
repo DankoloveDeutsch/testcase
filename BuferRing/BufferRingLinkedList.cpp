@@ -28,6 +28,7 @@ public:
 		if (size == maxSize) {
 			std::cout << "Buffer is full" << std::endl;
 			return;
+		}
 		Node* ptr = new Node(data);
 		ptr->prev = tail;
 		if (tail != NULL)
