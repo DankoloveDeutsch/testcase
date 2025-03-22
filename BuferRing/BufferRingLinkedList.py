@@ -13,35 +13,31 @@ class BufferRingLinkedList:
 
     def push_back(self, data):
         if self.size == self.max_size:
-            print("Buffer is full")
-            return
-        
+            raise Exception("Buffer is full")
         new_node = Node(data)
-        if self.tail:
-            self.tail.next = new_node
-            new_node.prev = self.tail
-        self.tail = new_node
         if not self.head:
             self.head = new_node
+            self.tail = new_node
+        else:
+            self.tail.next = new_node
+            new_node.prev = self.tail
+            self.tail = new_node
         self.size += 1
 
     def pop_front(self):
-        if not self.head:
-            print("Buffer is empty")
-            return
-        
+        if self.is_empty():
+            raise Exception("Buffer is empty")
+        data = self.head.data
+        self.head = self.head.next
         if self.head:
-            temp = self.head
-            self.head = self.head.next
-            if self.head:
-                self.head.prev = None
-            else:
-                self.tail = None
-            del temp
-            self.size -= 1
+            self.head.prev = None
+        else:
+            self.tail = None
+        self.size -= 1
+        return data
 
     def is_empty(self):
-        return self.head is None
+        return self.size == 0
 
     def get_size(self):
         return self.size

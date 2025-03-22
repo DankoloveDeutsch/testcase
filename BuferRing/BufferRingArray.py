@@ -4,7 +4,7 @@ class BufferRingArray:
         self.end = 0
         self.max_size = size
         self.count = 0
-        self.buffer = [0] * self.max_size
+        self.buffer = [None] * self.max_size
 
     def is_full(self):
         return self.count == self.max_size
@@ -14,24 +14,21 @@ class BufferRingArray:
 
     def push_back(self, data):
         if self.is_full():
-            print("Buffer is full")
-        else:
-            self.buffer[self.end] = data
-            self.end = (self.end + 1) % self.max_size
-            self.count += 1
+            raise Exception("Buffer is full") 
+        self.buffer[self.end] = data
+        self.end = (self.end + 1) % self.max_size
+        self.count += 1
 
     def pop_front(self):
         if self.is_empty():
-            print("Buffer is empty")
-        else:
-            data = self.buffer[self.start]
-            self.start = (self.start + 1) % self.max_size
-            self.count -= 1
-            return data
+            raise Exception("Buffer is empty")
+        data = self.buffer[self.start]
+        self.start = (self.start + 1) % self.max_size
+        self.count -= 1
+        return data
 
     def size(self):
         return self.count
-
 def main():
     buffer = BufferRingArray(5)
 

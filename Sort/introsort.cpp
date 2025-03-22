@@ -1,98 +1,67 @@
 #include <iostream>
-#include <algorithm>
-#include <vector>
-#include <chrono>
-#include <random>
+#include <cstdlib>
+#include <ctime>
+#include <iomanip>
 
-void insertionsort(std::vector<int>& data, int low, int high) {
-    for (int i = low + 1; i <= high; i++) {
-        int value = data[i];
-        int j = i;
-        while (j > low && data[j - 1] > value) {
-            data[j] = data[j - 1];
-            j--;
-        }
-        data[j] = value;
-    }
+using namespace std;
+
+// Функция для генерации случайного числа в интервале [0, 1)
+double generateRandom() {
+    return rand() / (RAND_MAX + 1.0);
 }
 
-int partition(std::vector<int>& data, int low, int high) {
-    int pivot = data[high];
-    int pIndex = low;
-    for (int i = low; i < high; i++) {
-        if (data[i] <= pivot) {
-            std::swap(data[i], data[pIndex]);
-            pIndex++;
-        }
-    }
-    std::swap(data[pIndex], data[high]);
-    return pIndex;
+// Функция для моделирования одного испытания системы
+bool simulateSystemFailure(double p1) {
+    double r1 = generateRandom();
+    double r2 = generateRandom();
+    double r3 = generateRandom();
+
+    // Проверка отказа каждого прибора
+    bool failure1 = r1 < p1;
+    bool failure2 = r2 < p1;
+    bool failure3 = r3 < p1;
+
+    // Система выходит из строя, если вышел из строя П1 и оба прибора П2 и П3 одновременно
+    return failure1 || (failure2 && failure3);
 }
 
-int randPartition(std::vector<int>& data, int low, int high) {
-    int pivotIndex = rand() % (high - low + 1) + low;
-    std::swap(data[pivotIndex], data[high]);
-    return partition(data, low, high);
-}
-
-void heapsort(int* begin, int* end) {
-    std::make_heap(begin, end);
-    std::sort_heap(begin, end);
-}
-
-void introsort(std::vector<int>& data, int* begin, int* end, int maxdepth) {
-    if ((end - begin) < 16) {
-        insertionsort(data, begin - &data[0], end - &data[0] - 1);
-    }
-    else if (maxdepth == 0) {
-        heapsort(begin, end);
-    }
-    else {
-        int pivot = randPartition(data, begin - &data[0], end - &data[0] - 1);
-        introsort(data, begin, &data[pivot], maxdepth - 1);
-        introsort(data, &data[pivot + 1], end, maxdepth - 1);
-    }
-}
-void sort(std::vector<int>& data) {
-    int n = data.size();
-    int maxdepth = log(n) * 2;
-
-    auto start = std::chrono::high_resolution_clock::now();
-    introsort(data, &data[0], &data[0] + n, maxdepth);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    std::cout << "\nExecution time: " << duration << " nanoseconds" << std::endl;
-}
-std::vector<int> generate_random_data(int size) {
-    std::vector<int> data(size);
-    std::generate(data.begin(), data.end(), std::rand);
-    return data;
-}
-std::vector<int> generate_sorted_data(int size) {
-    std::vector<int> data(size);
-    std::iota(data.begin(), data.end(), 0);
-    return data;
-}
-
-std::vector<int> generate_reverse_sorted_data(int size) {
-    std::vector<int> data(size);
-    std::iota(data.begin(), data.end(), 0);
-    std::reverse(data.begin(), data.end());
-    return data;
-}
 int main() {
-    int n = 100;
+    srand(time(0)); // Инициализация генератора случайных чисел
 
-    std::vector<int> random = generate_random_data(n);
-    std::vector<int> sorted = generate_sorted_data(n);
-    std::vector<int> reverse = generate_reverse_sorted_data(n);
+    int m, n;
+    double p1, p2, p3, sum = 0, sred;
 
-    std::cout << "Random \t";
-    sort(random);
-    std::cout << std::endl;
-    std::cout << "Sorted \t";
-    sort(sorted);
-    std::cout << std::endl;
-    std::cout << "Reverse \t";
-    sort(reverse);
-};
+    // Ввод количества экспериментов
+    do {
+        cout << "Введите число экспериментов >=1 и <=1000: ";
+        cin >> m;
+    } while (m < 1 || m > 1000);
+
+    // Ввод количества испытаний
+    do {
+        cout << "Введите число испытаний >=100 и <=2000: ";
+        cin >> n;
+    } while (n < 100 || n > 2000);
+
+    // Ввод вероятностей отказа для каждого прибора
+    cout << "Введите вероятность отказа приборов(P1): ";
+    cin >> p1;
+
+
+    for (int j = 0; j < m; ++j) {
+        int kol = 0;
+        for (int i = 0; i < n; ++i) {
+            if (simulateSystemFailure(p1)) {
+                kol++;
+            }
+        }
+        double p = static_cast<double>(kol) / n;
+        //cout << fixed << setprecision(4) << "Вероятность отказа системы = " << p << endl;
+        sum += p;
+    }
+
+    sred = sum / m;
+    cout << fixed << setprecision(4) << "Среднее значение вероятности отказа системы = " << sred << endl;
+
+    return 0;
+}
